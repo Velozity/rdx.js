@@ -1,0 +1,6 @@
+# Don't include node_modules from template
+template/**/node_modules
+template/**/dist
+template/**/.turbo
+template/**/*.sqlite3
+template/**/pnpm-lock.yaml

@@ -1,0 +1,56 @@
+# Source files (compiled versions are in dist/)
+src/
+tests/
+*.test.ts
+*.spec.ts
+
+# Configuration files
+tsconfig.json
+vitest.config.ts
+eslint.config.ts
+prettier.config.cjs
+.eslintrc*
+.prettierrc*
+
+packages/
+
+# Documentation that's not needed in package
+PUBLISHING.md
+.env.example
+
+# Development files
+.vscode/
+.idea/
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build artifacts
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Misc
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

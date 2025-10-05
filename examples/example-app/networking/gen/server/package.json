@@ -1,0 +1,13 @@
+{
+  "name": "@rdx.js-example/gen-server",
+  "version": "1.0.1759671324534",
+	"dependencies": {
+		"@rdx.js-example/gen-shared": "file:../shared"
+	},
+  "main": "./dist/cjs/index.js",
+	"type": "commonjs",
+  "typings": "./dist/cjs/index.d.ts",
+	"scripts": { 
+		"build": "tsc"
+	}
+}

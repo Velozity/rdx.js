@@ -1,0 +1,19 @@
+# Build artifacts
+node_modules
+dist
+.turbo
+
+# Database files
+*.sqlite3
+*.db
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+
+# Environment
+.env.local

@@ -1,0 +1,6 @@
+{
+  "name": "@rdx.js-example/networking",
+  "scripts": {
+    "build": "rootsdk build proto"
+  }
+}

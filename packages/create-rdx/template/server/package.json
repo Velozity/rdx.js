@@ -1,0 +1,21 @@
+{
+  "name": "@rdx.js-example/server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Basic app example using rdx.js",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "pnpm run clean && pnpm exec tsc",
+    "start": "rootsdk start devhost --project-folder=..",
+    "dev": "pnpm run build && pnpm run start",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "pino": "^9.11.0",
+    "dotenv": "^16.4.7",
+    "rdx.js": "file:../../.."
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+PUBLISHING.md
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# npm
+*.tgz
+package-lock.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.turbo/
+

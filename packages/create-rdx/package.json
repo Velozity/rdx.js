@@ -1,0 +1,57 @@
+{
+  "name": "create-rdx",
+  "version": "1.0.2",
+  "description": "Create a new rdx.js application with a single command",
+  "type": "module",
+  "bin": {
+    "create-rdx": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build",
+    "publish:dry": "npm publish --dry-run",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:major": "npm version major && npm publish"
+  },
+  "keywords": [
+    "rdx",
+    "rdx.js",
+    "root",
+    "root-sdk",
+    "create",
+    "template",
+    "generator",
+    "cli"
+  ],
+  "author": "Zacary.dev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zacary/rdx.js.git",
+    "directory": "packages/create-rdx"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "ora": "^8.1.1",
+    "prompts": "^2.4.2",
+    "execa": "^9.5.2",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.6",
+    "@types/prompts": "^2.4.9",
+    "@types/fs-extra": "^11.0.4",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

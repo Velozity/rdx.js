@@ -1,0 +1,11 @@
+packages:
+  - networking
+  - server
+  - client
+
+onlyBuiltDependencies:
+  - '@rootsdk/dev-tools'
+  - esbuild
+  - protobufjs
+  - sqlite3
+  - utf-8-validate
