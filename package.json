@@ -40,8 +40,10 @@
     "README.md",
     "LICENSE"
   ],
+  "peerDependencies": {
+    "@rootsdk/server-app": "*"
+  },
   "dependencies": {
-    "@rootsdk/server-app": "*",
     "pino": "^9.11.0",
     "pino-pretty": "^13.1.1"
   },

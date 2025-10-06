@@ -12,8 +12,7 @@
   },
   "dependencies": {
     "pino": "^9.11.0",
-    "dotenv": "^16.4.7",
-    "rdx.js": "file:../../.."
+    "dotenv": "^16.4.7"
   },
   "engines": {
     "node": ">=22"

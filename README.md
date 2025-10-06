@@ -55,8 +55,10 @@ pnpm run dev:client
 ### Manual Installation
 
 ```bash
-pnpm add rdx.js
+pnpm add rdx.js @rootsdk/server-app
 ```
+
+> **Note:** `@rootsdk/server-app` is a required peer dependency. Make sure to install it alongside rdx.js.
 
 ## Usage
 

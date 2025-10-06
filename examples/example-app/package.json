@@ -12,6 +12,7 @@
   "dependencies": {
     "@rootsdk/client-app": "*",
     "@rootsdk/server-app": "*",
+    "rdx.js": "file:../..",
     "@rdx.js-example/gen-client": "file:./networking/gen/client",
     "@rdx.js-example/gen-server": "file:./networking/gen/server",
     "@rdx.js-example/gen-shared": "file:./networking/gen/shared"
