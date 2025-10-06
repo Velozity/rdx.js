@@ -1,4 +1,8 @@
-import type { ChannelMessageCreatedEvent, CommunityMember } from "@rootsdk/server-app";
+import type {
+  ChannelMessage,
+  ChannelMessageCreatedEvent,
+  CommunityMember,
+} from "@rootsdk/server-app";
 import { rootServer } from "@rootsdk/server-app";
 
 export class CommandHelpers {
@@ -25,11 +29,11 @@ export class CommandHelpers {
     options?: {
       includeMention?: boolean;
     }
-  ): Promise<void> {
+  ): Promise<ChannelMessage> {
     const shouldMention = options?.includeMention ?? false;
     const finalContent = shouldMention ? (await this.mention()) + " " + content : content;
 
-    await rootServer.community.channelMessages.create({
+    return await rootServer.community.channelMessages.create({
       channelId: this.evt.channelId,
       content: finalContent,
     });

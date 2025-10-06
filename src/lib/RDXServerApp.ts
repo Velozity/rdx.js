@@ -286,12 +286,15 @@ class RDXServerApp {
         const channelId = (data as any)?.channelId || "";
         const helpers = new EventHelpers(channelId);
 
-        // Merge helpers into the event data
-        const eventWithHelpers = Object.assign(
-          Object.create(EventHelpers.prototype),
-          data,
-          helpers
-        );
+        // Merge helpers into the event data by spreading and binding methods
+        const eventWithHelpers = {
+          ...(data as object),
+          reply: helpers.reply.bind(helpers),
+          mention: helpers.mention.bind(helpers),
+          getMemberNickname: helpers.getMemberNickname.bind(helpers),
+          channel: helpers.channel,
+          rawClient: helpers.rawClient,
+        };
 
         const eventContext: EventContext = {
           eventName: event.event,
@@ -366,8 +369,7 @@ class RDXServerApp {
     const parsedArgs = command.parseArgs(args);
     if (!parsedArgs.valid) {
       const helpers = new CommandHelpers(ctx);
-      const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
-      await ctxWithHelpers.reply(`❌ ${parsedArgs.error}\n\nUsage: \`!${command.getUsage()}\``);
+      await helpers.reply(`❌ ${parsedArgs.error}\n\nUsage: \`!${command.getUsage()}\``);
       return false;
     }
 
@@ -383,8 +385,16 @@ class RDXServerApp {
     try {
       const helpers = new CommandHelpers(ctx);
 
-      // Merge helpers into ctx
-      const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
+      // Merge helpers into ctx by spreading both objects and binding methods
+      const ctxWithHelpers = {
+        ...ctx,
+        reply: helpers.reply.bind(helpers),
+        mention: helpers.mention.bind(helpers),
+        getMemberNickname: helpers.getMemberNickname.bind(helpers),
+        member: helpers.member,
+        rawClient: helpers.rawClient,
+        rawEvent: helpers.rawEvent,
+      };
 
       const context = {
         args: parsedArgs.args,
