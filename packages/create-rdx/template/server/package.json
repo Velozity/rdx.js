@@ -13,7 +13,9 @@
   "dependencies": {
     "pino": "^9.11.0",
     "dotenv": "^16.4.7",
-    "rdx.js": "latest"
+    "rdx.js": "latest",
+    "@rdx.js-example/gen-shared": "file:../networking/gen/shared",
+    "@rdx.js-example/gen-server": "file:../networking/gen/server"
   },
   "engines": {
     "node": ">=22"

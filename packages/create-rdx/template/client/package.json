@@ -5,7 +5,9 @@
   "type": "module",
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@rdx.js-example/gen-client": "file:../networking/gen/client",
+    "@rdx.js-example/gen-shared": "file:../networking/gen/shared"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

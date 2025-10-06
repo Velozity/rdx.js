@@ -1,7 +1,8 @@
 {
   "name": "@rdx.js-example/networking",
   "dependencies": {
-    "@protobuf-ts/runtime": "^2.11.1"
+    "@protobuf-ts/runtime": "^2.11.1",
+    "@rdx.js-example/gen-shared": "file:./gen/shared"
   },
   "scripts": {
     "build": "rootsdk build proto"
