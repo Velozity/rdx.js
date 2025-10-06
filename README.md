@@ -5,6 +5,7 @@
 A powerful, type-safe framework for building Root applications with elegant command, event, and job management systems.
 
 > **Note:** This SDK is exclusively available for Root applications. It requires access to the Root platform and its SDK package `@rootsdk/server-app`. Support for `@rootsdk/server-bot` coming soon.
+Get your Application ID & Dev Token at https://dev.rootapp.com/apps
 
 ## Features
 
@@ -18,6 +19,10 @@ A powerful, type-safe framework for building Root applications with elegant comm
 - 🚀 **Quick Start** - Create a new project with `npx create-rdx@latest`
 
 ## Quick Start
+
+### Register Your App
+
+Visit https://dev.rootapp.com/apps and register an app, taking note of the Application ID and Dev Token (found in the application settings).
 
 ### Get Up & Running in One Command
 
@@ -49,12 +54,6 @@ pnpm run dev:client
 ### Manual Installation
 
 ```bash
-npm install rdx.js
-```
-
-or
-
-```bash
 pnpm add rdx.js
 ```
 
@@ -77,11 +76,11 @@ const client = new RDXServerApp({
 
 ```typescript
 import { RDXServerApp } from "rdx.js";
-import { MyCustomService } from "./services/MyService";
+import { EchoService } from "./services/echo.service";
 
 const client = new RDXServerApp({
   cmdPrefix: "!",
-  services: [MyCustomService],
+  services: [EchoService],
   onStarting: async () => {
     console.log("Initializing services...");
   },
@@ -137,7 +136,7 @@ export default class PingCommand extends RootCommand {
       name: "ping",
       description: "Check application latency",
       aliases: ["pong"],
-      cooldown: 3000,
+      cooldown: 3, // Time in seconds
     });
   }
 
@@ -161,8 +160,7 @@ export default class SayCommand extends RootCommand {
         {
           name: "message",
           description: "Message to send",
-          required: true,
-          type: "string",
+          required: true
         },
       ],
     });
@@ -182,7 +180,7 @@ export default class KickCommand extends RootCommand {
     super({
       name: "kick",
       description: "Kick a user",
-      args: [{ name: "userId", required: true, type: "string" }],
+      args: [{ name: "userId", required: true }],
     });
   }
 
