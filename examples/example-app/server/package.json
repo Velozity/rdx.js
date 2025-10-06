@@ -8,7 +8,7 @@
     "build": "pnpm run clean && pnpm exec tsc",
     "start": "rootsdk start devhost --project-folder=..",
     "dev": "pnpm run build && pnpm run start",
-    "clean": "rimraf dist"
+    "clean": "(rimraf dist 2>nul || rm -rf dist 2>/dev/null || true) || node -e \"require('fs').rmSync('dist', {recursive: true, force: true})\""
   },
   "dependencies": {
     "pino": "^9.11.0",
