@@ -7,6 +7,6 @@ export { CommandArg, CommandContext, CommandOptions, ParsedArgs, RootCommand } f
 
 export { EventContext, EventOptions, RootEvent } from "./RootEvent";
 
-export { RootEventMap, RootEventType } from "./RootEventType";
+export { RootEventMap, RootEventType, SDKEventType } from "./Types/RootEventType";
 
 export { JobContext, JobOptions, RootJob } from "./RootJob";

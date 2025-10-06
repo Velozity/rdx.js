@@ -23,10 +23,17 @@ export class CommandHelpers {
   /**
    * Reply to the message that triggered the command
    */
-  async reply(content: string, includeMention = true): Promise<void> {
+  async reply(
+    content: string,
+    options:
+      | {
+          includeMention?: boolean;
+        }
+      | undefined = { includeMention: false }
+  ): Promise<void> {
     await this.client.community.channelMessages.create({
       channelId: this.evt.channelId,
-      content: includeMention ? (await this.mention()) + " " + content : content,
+      content: options.includeMention ? (await this.mention()) + " " + content : content,
     });
   }
 

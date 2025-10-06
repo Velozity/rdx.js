@@ -1,11 +1,25 @@
-import type { ChannelMessageCreatedEvent, rootServer } from "@rootsdk/server-app";
-import type { CommandHelpers } from "./Helpers/CommandHelpers";
+import type { ChannelMessageCreatedEvent, RootServer } from "@rootsdk/server-app";
+
+/**
+ * Public API of CommandHelpers that gets merged into ctx
+ */
+export interface CommandHelperMethods {
+  mention(): Promise<string>;
+  getMemberNickname(): Promise<string>;
+  reply(content: string, options?: { includeMention?: boolean }): Promise<void>;
+  readonly member: {
+    id: string;
+    mention: () => Promise<string>;
+  };
+  readonly rawClient: RootServer;
+  readonly rawEvent: ChannelMessageCreatedEvent;
+}
 
 export interface CommandArg {
   name: string;
   description: string;
   required?: boolean;
-  options?: string[]; // If provided, argument must be one of these values
+  options?: string[];
 }
 
 export interface CommandOptions {
@@ -20,11 +34,10 @@ export interface CommandOptions {
   permissions?: string[];
 }
 
-export interface CommandContext<TEvent = unknown> {
+export interface CommandContext<TEvent = ChannelMessageCreatedEvent> {
   args: string[];
-  ctx: TEvent;
-  client: typeof rootServer;
-  helpers: CommandHelpers;
+  ctx: TEvent & CommandHelperMethods;
+  client: RootServer;
 }
 
 export interface ParsedArgs {

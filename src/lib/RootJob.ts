@@ -1,4 +1,4 @@
-import type { JobInterval, rootServer } from "@rootsdk/server-app";
+import type { JobInterval, RootServer } from "@rootsdk/server-app";
 
 export interface JobOptions {
   tag: string;
@@ -14,7 +14,7 @@ export interface JobContext {
   jobTime: number;
   jobScheduleId: string;
   tag: string;
-  rootServer: typeof rootServer;
+  rootServer: RootServer;
 }
 
 export abstract class RootJob {
@@ -33,8 +33,6 @@ export abstract class RootJob {
     this.jobInterval = options.jobInterval;
     this.end = options.end;
     this.enabled = options.enabled ?? true;
-
-    // Derive name from the tag
     this.name = options.tag;
   }
 

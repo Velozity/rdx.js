@@ -1,6 +1,6 @@
 {
   "name": "@rdx.js-example/gen-shared",
-  "version": "1.0.1759671324533",
+  "version": "1.0.1759738719636",
   "main": "./dist/cjs/index.js",
   "typings": "./dist/cjs/index.d.ts",
   "module": "./dist/mjs/index.js",

@@ -1,11 +1,6 @@
-import {
-  ChannelMessageCreatedEvent,
-  RootEvent,
-  RootEventType,
-  type EventContext
-} from "rdx.js";
+import { ChannelMessageCreatedEvent, RootEvent, RootEventType, type EventContext } from "rdx.js";
 
-export default class WelcomeEvent extends RootEvent {
+export default class WelcomeEvent extends RootEvent<ChannelMessageCreatedEvent> {
   constructor() {
     super({
       event: RootEventType.CommunityMemberJoined,
@@ -13,13 +8,10 @@ export default class WelcomeEvent extends RootEvent {
     });
   }
 
-  async execute({
-    data,
-    helpers
-  }: EventContext<ChannelMessageCreatedEvent>): Promise<void> {
+  async execute({ event }: EventContext<ChannelMessageCreatedEvent>): Promise<void> {
     const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
-    await helpers.reply(randomMessage.replace("{user}", await helpers.mention(data.userId)));
+    await event.reply(randomMessage.replace("{user}", await event.mention(event.userId)));
 
     // If you want to do it manually, you can use the rootServer instance
     // await rootServer.community.channelMessages.create({

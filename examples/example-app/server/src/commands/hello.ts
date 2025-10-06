@@ -20,8 +20,8 @@ export default class HelloCommand extends RootCommand<ChannelMessageCreatedEvent
     });
   }
 
-  async execute(context: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
-    const name = context.args[0];
+  async execute({ args, ctx }: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
+    const name = args[0];
 
     const greetings = [
       `👋 Hello, ${name}!`,
@@ -32,6 +32,6 @@ export default class HelloCommand extends RootCommand<ChannelMessageCreatedEvent
 
     const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
 
-    await context.helpers.reply(randomGreeting);
+    await ctx.reply(randomGreeting, { includeMention: true });
   }
 }

@@ -29,20 +29,20 @@ export class HelpCommand extends RootCommand<ChannelMessageCreatedEvent> {
   }
 
   public async execute(context: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
-    const { args, helpers } = context;
+    const { args, ctx } = context;
 
     // If no command specified, list all commands
     if (args.length === 0) {
-      await this.listAllCommands(helpers);
+      await this.listAllCommands(ctx);
       return;
     }
 
     // Show help for specific command
     const commandName = args[0].toLowerCase();
-    await this.showCommandHelp(commandName, helpers);
+    await this.showCommandHelp(commandName, ctx);
   }
 
-  private async listAllCommands(helpers: CommandContext["helpers"]): Promise<void> {
+  private async listAllCommands(ctx: CommandContext<ChannelMessageCreatedEvent>["ctx"]): Promise<void> {
     // Deduplicate commands (the Map contains both main names and aliases pointing to the same instance)
     const uniqueCommands = new Map<string, RootCommand>();
     for (const command of this.commands.values()) {
@@ -76,12 +76,12 @@ export class HelpCommand extends RootCommand<ChannelMessageCreatedEvent> {
 
     message += `\nUse \`!help <command>\` to get detailed information about a specific command.`;
 
-    await helpers.reply(message);
+    await ctx.reply(message);
   }
 
   private async showCommandHelp(
     commandName: string,
-    helpers: CommandContext["helpers"]
+    ctx: CommandContext<ChannelMessageCreatedEvent>["ctx"]
   ): Promise<void> {
     // Find command (check name and aliases)
     let command: RootCommand | undefined;
@@ -94,7 +94,7 @@ export class HelpCommand extends RootCommand<ChannelMessageCreatedEvent> {
     }
 
     if (!command) {
-      await helpers.reply(
+      await ctx.reply(
         `❌ Command \`${commandName}\` not found. Use \`!help\` to see all commands.`
       );
       return;
@@ -140,6 +140,6 @@ export class HelpCommand extends RootCommand<ChannelMessageCreatedEvent> {
       message += `**Cooldown:** ${command.cooldown}s\n`;
     }
 
-    await helpers.reply(message);
+    await ctx.reply(message);
   }
 }

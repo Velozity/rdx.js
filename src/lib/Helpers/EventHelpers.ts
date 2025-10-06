@@ -1,4 +1,4 @@
-import { ChannelGuid, rootServer, UserGuid } from "@rootsdk/server-app";
+import { ChannelGuid, RootServer, rootServer, UserGuid } from "@rootsdk/server-app";
 
 /**
  * Helper methods for event handlers
@@ -7,7 +7,7 @@ import { ChannelGuid, rootServer, UserGuid } from "@rootsdk/server-app";
 export class EventHelpers {
   constructor(
     private channelId: ChannelGuid,
-    private client: typeof rootServer
+    private client: RootServer
   ) {}
 
   public async mention(userId: string): Promise<string> {

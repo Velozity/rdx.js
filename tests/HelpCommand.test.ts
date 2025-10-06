@@ -3,7 +3,6 @@ import type { ChannelMessageCreatedEvent } from "@rootsdk/server-app";
 import { HelpCommand } from "../src/lib/BaseCommands/HelpCommand";
 import { RootCommand } from "../src/lib/RootCommand";
 import type { CommandContext } from "../src/lib/RootCommand";
-import { CommandHelpers } from "../src/lib/Helpers/CommandHelpers";
 
 class MockCommand extends RootCommand {
   constructor() {
@@ -38,15 +37,13 @@ describe("HelpCommand", () => {
       const helpCommand = new HelpCommand(commands);
 
       const mockReply = vi.fn();
-      const mockHelpers = {
-        reply: mockReply,
-      } as unknown as CommandHelpers;
 
       const mockContext = {
         args: [],
-        ctx: {} as ChannelMessageCreatedEvent,
+        ctx: {
+          reply: mockReply,
+        } as any,
         client: {} as any,
-        helpers: mockHelpers,
       } as CommandContext<ChannelMessageCreatedEvent>;
 
       await helpCommand.execute(mockContext);
@@ -62,15 +59,13 @@ describe("HelpCommand", () => {
       const helpCommand = new HelpCommand(commands);
 
       const mockReply = vi.fn();
-      const mockHelpers = {
-        reply: mockReply,
-      } as unknown as CommandHelpers;
 
       const mockContext = {
         args: ["mock"],
-        ctx: {} as ChannelMessageCreatedEvent,
+        ctx: {
+          reply: mockReply,
+        } as any,
         client: {} as any,
-        helpers: mockHelpers,
       } as CommandContext<ChannelMessageCreatedEvent>;
 
       await helpCommand.execute(mockContext);
@@ -86,15 +81,13 @@ describe("HelpCommand", () => {
       const helpCommand = new HelpCommand(commands);
 
       const mockReply = vi.fn();
-      const mockHelpers = {
-        reply: mockReply,
-      } as unknown as CommandHelpers;
 
       const mockContext = {
         args: ["nonexistent"],
-        ctx: {} as ChannelMessageCreatedEvent,
+        ctx: {
+          reply: mockReply,
+        } as any,
         client: {} as any,
-        helpers: mockHelpers,
       } as CommandContext<ChannelMessageCreatedEvent>;
 
       await helpCommand.execute(mockContext);

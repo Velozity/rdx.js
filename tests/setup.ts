@@ -28,10 +28,28 @@ vi.mock("@rootsdk/server-app", () => ({
       communityMembers: {
         get: vi.fn().mockResolvedValue({ nickname: "TestUser" }),
         remove: vi.fn(),
+        on: vi.fn(),
+        once: vi.fn(),
       },
       channels: {
         get: vi.fn(),
+        on: vi.fn(),
+        once: vi.fn(),
       },
+      channelGroups: {
+        on: vi.fn(),
+        once: vi.fn(),
+      },
+      channelDirectories: {
+        on: vi.fn(),
+        once: vi.fn(),
+      },
+      communityMemberBans: {
+        on: vi.fn(),
+        once: vi.fn(),
+      },
+      on: vi.fn(),
+      once: vi.fn(),
     },
     jobScheduler: {
       create: vi.fn(),
@@ -40,8 +58,45 @@ vi.mock("@rootsdk/server-app", () => ({
   },
   ChannelMessageEvent: {
     ChannelMessageCreated: "ChannelMessageCreated",
-    ChannelMessageUpdated: "ChannelMessageUpdated",
+    ChannelMessageEdited: "ChannelMessageEdited",
     ChannelMessageDeleted: "ChannelMessageDeleted",
+    ChannelMessageReactionCreated: "ChannelMessageReactionCreated",
+    ChannelMessageReactionDeleted: "ChannelMessageReactionDeleted",
+    ChannelMessagePinCreated: "ChannelMessagePinCreated",
+    ChannelMessagePinDeleted: "ChannelMessagePinDeleted",
+    ChannelMessageSetTypingIndicator: "ChannelMessageSetTypingIndicator",
+  },
+  CommunityEvent: {
+    CommunityJoined: "CommunityJoined",
+    CommunityLeave: "CommunityLeave",
+    CommunityEdited: "CommunityEdited",
+  },
+  CommunityMemberBanEvent: {
+    CommunityMemberBanCreated: "CommunityMemberBanCreated",
+    CommunityMemberBanDeleted: "CommunityMemberBanDeleted",
+  },
+  CommunityMemberEvent: {
+    CommunityMemberAttach: "CommunityMemberAttach",
+    CommunityMemberDetach: "CommunityMemberDetach",
+    UserSetProfile: "UserSetProfile",
+  },
+  ChannelEvent: {
+    ChannelCreated: "ChannelCreated",
+    ChannelDeleted: "ChannelDeleted",
+    ChannelEdited: "ChannelEdited",
+    ChannelMoved: "ChannelMoved",
+  },
+  ChannelGroupEvent: {
+    ChannelGroupCreated: "ChannelGroupCreated",
+    ChannelGroupDeleted: "ChannelGroupDeleted",
+    ChannelGroupEdited: "ChannelGroupEdited",
+    ChannelGroupMoved: "ChannelGroupMoved",
+  },
+  ChannelDirectoryEvent: {
+    ChannelDirectoryCreated: "ChannelDirectoryCreated",
+    ChannelDirectoryDeleted: "ChannelDirectoryDeleted",
+    ChannelDirectoryEdited: "ChannelDirectoryEdited",
+    ChannelDirectoryMoved: "ChannelDirectoryMoved",
   },
   JobScheduleEvent: {
     Job: "Job",

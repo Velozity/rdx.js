@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { RootEvent } from "../src/lib/RootEvent";
 import type { EventContext } from "../src/lib/RootEvent";
-import { RootEventType } from "../src/lib/RootEventType";
+import { RootEventType } from "../src/lib/Types/RootEventType";
 
 class TestEvent extends RootEvent {
   constructor() {
@@ -50,10 +50,9 @@ describe("RootEvent", () => {
     it("should be callable", async () => {
       const event = new TestEvent();
       const mockContext = {
-        event: "ChannelMessageCreated",
-        data: {},
+        eventName: RootEventType.ChannelMessageCreated,
+        event: {},
         rootServer: {},
-        helpers: {},
       } as unknown as EventContext;
 
       await expect(event.execute(mockContext)).resolves.toBeUndefined();

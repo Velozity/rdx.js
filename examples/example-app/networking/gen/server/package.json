@@ -1,6 +1,6 @@
 {
   "name": "@rdx.js-example/gen-server",
-  "version": "1.0.1759671324534",
+  "version": "1.0.1759738719637",
 	"dependencies": {
 		"@rdx.js-example/gen-shared": "file:../shared"
 	},

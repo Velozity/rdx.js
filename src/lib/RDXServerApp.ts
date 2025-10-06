@@ -4,7 +4,18 @@ import type {
   RootServer,
   RootServerService,
 } from "@rootsdk/server-app";
-import { ChannelMessageEvent, JobScheduleEvent, rootServer } from "@rootsdk/server-app";
+import {
+  JobScheduleEvent,
+  rootServer,
+  ChannelMessageEvent,
+  CommunityEvent,
+  CommunityMemberBanEvent,
+  CommunityMemberEvent,
+  ChannelEvent,
+  ChannelGroupEvent,
+  ChannelDirectoryEvent,
+} from "@rootsdk/server-app";
+
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { HelpCommand } from "./BaseCommands/HelpCommand";
@@ -14,7 +25,7 @@ import type { LoaderOptions } from "./Utils/FileLoader";
 import { FileLoader } from "./Utils/FileLoader";
 import { createLogger } from "./Utils/Logger";
 import type { RootCommand } from "./RootCommand";
-import type { RootEvent } from "./RootEvent";
+import type { EventContext, RootEvent } from "./RootEvent";
 import type { RootJob } from "./RootJob";
 
 type RootClientOptions = {
@@ -274,11 +285,18 @@ class RDXServerApp {
       void (async () => {
         const channelId = (data as any)?.channelId || "";
         const helpers = new EventHelpers(channelId, rootServer as RootServer);
-        const eventContext = {
-          event: event.sdkEvent,
+
+        // Merge helpers into the event data
+        const eventWithHelpers = Object.assign(
+          Object.create(EventHelpers.prototype),
           data,
+          helpers
+        );
+
+        const eventContext: EventContext = {
+          eventName: event.event,
+          event: eventWithHelpers,
           rootServer: rootServer as RootServer,
-          helpers,
         };
 
         if (event.validate && !event.validate(eventContext)) {
@@ -293,11 +311,36 @@ class RDXServerApp {
       })();
     };
 
+    // Determine which event emitter to use based on the event type
+    const eventValue = event.sdkEvent;
+    const eventEmitter = this.getEventEmitter(eventValue);
+
     if (event.once) {
-      rootServer.community.channelMessages.once(event.sdkEvent, listener);
+      (eventEmitter as any).once(eventValue, listener);
     } else {
-      rootServer.community.channelMessages.on(event.sdkEvent, listener);
+      (eventEmitter as any).on(eventValue, listener);
     }
+  }
+
+  private getEventEmitter(eventValue: any): any {
+    if (Object.values(ChannelMessageEvent).includes(eventValue)) {
+      return rootServer.community.channelMessages;
+    } else if (Object.values(CommunityEvent).includes(eventValue)) {
+      return rootServer.community;
+    } else if (Object.values(CommunityMemberBanEvent).includes(eventValue)) {
+      return rootServer.community.communityMemberBans;
+    } else if (Object.values(CommunityMemberEvent).includes(eventValue)) {
+      return rootServer.community.communityMembers;
+    } else if (Object.values(ChannelEvent).includes(eventValue)) {
+      return rootServer.community.channels;
+    } else if (Object.values(ChannelGroupEvent).includes(eventValue)) {
+      return rootServer.community.channelGroups;
+    } else if (Object.values(ChannelDirectoryEvent).includes(eventValue)) {
+      return rootServer.community.channelDirectories;
+    }
+
+    logger.error(`Unknown event type ${eventValue}`);
+    throw new Error(`Unknown event type: ${eventValue}`);
   }
 
   private createEventKey(event: RootEvent, fallbackName: string): string {
@@ -320,7 +363,8 @@ class RDXServerApp {
     const parsedArgs = command.parseArgs(args);
     if (!parsedArgs.valid) {
       const helpers = new CommandHelpers(ctx, rootServer as RootServer);
-      await helpers.reply(`❌ ${parsedArgs.error}\n\nUsage: \`!${command.getUsage()}\``);
+      const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
+      await ctxWithHelpers.reply(`❌ ${parsedArgs.error}\n\nUsage: \`!${command.getUsage()}\``);
       return false;
     }
 
@@ -336,11 +380,13 @@ class RDXServerApp {
     try {
       const helpers = new CommandHelpers(ctx, rootServer as RootServer);
 
+      // Merge helpers into ctx
+      const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
+
       const context = {
         args: parsedArgs.args,
-        ctx,
+        ctx: ctxWithHelpers,
         client: rootServer as RootServer,
-        helpers,
       };
 
       if (command.validate && !(await command.validate(context))) {

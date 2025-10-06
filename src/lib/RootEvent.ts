@@ -1,31 +1,41 @@
-import type { ChannelMessageEvent, rootServer } from "@rootsdk/server-app";
-import type { EventHelpers } from "./Helpers/EventHelpers";
-import type { RootEventType } from "./RootEventType";
-import { RootEventMap } from "./RootEventType";
+import type { RootServer } from "@rootsdk/server-app";
+import type { RootEventType, SDKEventType } from "./Types/RootEventType";
+import { RootEventMap } from "./Types/RootEventType";
+
+/**
+ * Public API of EventHelpers that gets merged into event data
+ */
+export interface EventHelperMethods {
+  mention(userId: string): Promise<string>;
+  getMemberNickname(userId: string): Promise<string>;
+  reply(content: string): Promise<void>;
+  readonly channel: {
+    id: string;
+    createMessage: (content: string) => Promise<void>;
+  };
+  readonly rawClient: RootServer;
+}
 
 export interface EventOptions {
-  event: RootEventType; // Now required and uses our unified enum
-  once?: boolean; // Whether the event should only fire once
+  event: RootEventType;
+  once?: boolean;
   enabled?: boolean;
 }
 
 export interface EventContext<TEventData = unknown> {
-  event: ChannelMessageEvent;
-  data: TEventData;
-  rootServer: typeof rootServer;
-  helpers: EventHelpers;
-  // Add more context properties as needed based on Root SDK
+  eventName: RootEventType;
+  event: TEventData & EventHelperMethods;
+  rootServer: RootServer;
 }
 
 export abstract class RootEvent<TEventData = unknown> {
   public readonly name: string;
   public readonly event: RootEventType;
-  public readonly sdkEvent: ChannelMessageEvent; // The actual SDK event
+  public readonly sdkEvent: SDKEventType;
   public readonly once: boolean;
   public readonly enabled: boolean;
 
   constructor(options: EventOptions) {
-    // Derive name from the event type if not provided
     this.name = options.event;
     this.event = options.event;
     this.sdkEvent = RootEventMap[options.event];

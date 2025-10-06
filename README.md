@@ -5,7 +5,7 @@
 A powerful, type-safe framework for building Root applications with elegant command, event, and job management systems.
 
 > **Note:** This SDK is exclusively available for Root applications. It requires access to the Root platform and its SDK package `@rootsdk/server-app`. Support for `@rootsdk/server-bot` coming soon.
-Get your Application ID & Dev Token at https://dev.rootapp.com/apps
+> Get your Application ID & Dev Token at https://dev.rootapp.com/apps
 
 ## Features
 
@@ -31,6 +31,7 @@ npx create-rdx@latest --app my-app
 ```
 
 This will:
+
 - Create a new project with client, server, and networking setup
 - Install all dependencies
 - Generate protocol buffer types
@@ -141,7 +142,8 @@ export default class PingCommand extends RootCommand {
   }
 
   async execute(context: CommandContext): Promise<void> {
-    await context.helpers.reply("🏓 Pong!");
+    // Helper methods are now available directly on ctx
+    await context.ctx.reply("🏓 Pong!", { includeMention: true });
   }
 }
 ```
@@ -160,14 +162,15 @@ export default class SayCommand extends RootCommand {
         {
           name: "message",
           description: "Message to send",
-          required: true
+          required: true,
         },
       ],
     });
   }
 
   async execute(context: CommandContext): Promise<void> {
-    await context.helpers.reply(context.args.message);
+    const message = context.args[0]; // First argument is the message
+    await context.ctx.reply(message);
   }
 }
 ```
@@ -187,20 +190,22 @@ export default class KickCommand extends RootCommand {
   async validate(context: CommandContext): Promise<boolean> {
     const hasPermission = await checkModeratorPermission(context.ctx.userId);
     if (!hasPermission) {
-      await context.helpers.reply("❌ You don't have permission!", true);
+      await context.ctx.reply("❌ You don't have permission!", { includeMention: true });
       return false;
     }
     return true;
   }
 
-  async execute({ rootServer, helpers, args }: CommandContext): Promise<void> {
-    await rootServer.community.communityMemberBans.kick({
-      userId: args.userId,
+  async execute({ client, ctx, args }: CommandContext): Promise<void> {
+    const userId = args[0]; // First argument is the userId
+
+    await client.community.communityMemberBans.kick({
+      userId: userId,
     });
 
-    // or you can import rootServer from the rdx.js package
-    
-    await helpers.reply("✅ User kicked!");
+    // or you can import rootServer directly from @rootsdk/server-app
+
+    await ctx.reply("✅ User kicked!");
   }
 }
 ```
@@ -209,10 +214,48 @@ export default class KickCommand extends RootCommand {
 
 Events are automatically discovered from `/events` folders in your project.
 
+### Available Event Types
+
+| Event Type                         | Category            | Description                                   |
+| ---------------------------------- | ------------------- | --------------------------------------------- |
+| `ChannelMessageCreated`            | Channel Messages    | Triggered when a message is created           |
+| `ChannelMessageEdited`             | Channel Messages    | Triggered when a message is edited            |
+| `ChannelMessageDeleted`            | Channel Messages    | Triggered when a message is deleted           |
+| `ChannelMessageReactionCreated`    | Channel Messages    | Triggered when a reaction is added            |
+| `ChannelMessageReactionDeleted`    | Channel Messages    | Triggered when a reaction is removed          |
+| `ChannelMessagePinCreated`         | Channel Messages    | Triggered when a message is pinned            |
+| `ChannelMessagePinDeleted`         | Channel Messages    | Triggered when a message is unpinned          |
+| `ChannelMessageSetTypingIndicator` | Channel Messages    | Triggered when typing indicator is set        |
+| `CommunityMemberJoined`            | Community Members   | Triggered when a member joins                 |
+| `CommunityMemberLeft`              | Community Members   | Triggered when a member leaves                |
+| `CommunityEdited`                  | Community           | Triggered when community is edited            |
+| `CommunityMemberBanCreated`        | Community Bans      | Triggered when a member is banned             |
+| `CommunityMemberBanDeleted`        | Community Bans      | Triggered when a ban is removed               |
+| `CommunityMemberAttach`            | Community Members   | Triggered when a member is attached           |
+| `CommunityMemberDetach`            | Community Members   | Triggered when a member is detached           |
+| `UserSetProfile`                   | Community Members   | Triggered when a user updates their profile   |
+| `ChannelCreated`                   | Channels            | Triggered when a channel is created           |
+| `ChannelDeleted`                   | Channels            | Triggered when a channel is deleted           |
+| `ChannelEdited`                    | Channels            | Triggered when a channel is edited            |
+| `ChannelMoved`                     | Channels            | Triggered when a channel is moved             |
+| `ChannelGroupCreated`              | Channel Groups      | Triggered when a channel group is created     |
+| `ChannelGroupDeleted`              | Channel Groups      | Triggered when a channel group is deleted     |
+| `ChannelGroupEdited`               | Channel Groups      | Triggered when a channel group is edited      |
+| `ChannelGroupMoved`                | Channel Groups      | Triggered when a channel group is moved       |
+| `ChannelDirectoryCreated`          | Channel Directories | Triggered when a channel directory is created |
+| `ChannelDirectoryDeleted`          | Channel Directories | Triggered when a channel directory is deleted |
+| `ChannelDirectoryEdited`           | Channel Directories | Triggered when a channel directory is edited  |
+| `ChannelDirectoryMoved`            | Channel Directories | Triggered when a channel directory is moved   |
+
 ### Basic Event
 
 ```typescript
-import { RootEvent, RootEventType, type EventContext, type ChannelMessageCreatedEvent } from "rdx.js";
+import {
+  RootEvent,
+  RootEventType,
+  type EventContext,
+  type ChannelMessageCreatedEvent,
+} from "rdx.js";
 
 export default class MessageCreated extends RootEvent {
   constructor() {
@@ -223,7 +266,9 @@ export default class MessageCreated extends RootEvent {
   }
 
   async execute(context: EventContext<ChannelMessageCreatedEvent>): Promise<void> {
-    console.log("Message received:", context.data.messageContent);
+    console.log("Message received:", context.event.messageContent);
+    // Helper methods are now directly on the event object
+    await context.event.reply("Message received!");
   }
 }
 ```
@@ -240,11 +285,12 @@ export default class MemberJoined extends RootEvent {
   }
 
   validate(context: EventContext<CommunityJoinedEvent>): boolean {
-    return !context.data.userId.includes("bot");
+    return !context.event.userId.includes("bot");
   }
 
   async execute(context: EventContext): Promise<void> {
-    await context.helpers.sendMessage("welcomeChannelId", `Welcome ${context.data.nickname}!`);
+    // Helper methods are available on the event object
+    await context.event.reply(`Welcome ${context.event.nickname}!`);
   }
 }
 ```
@@ -357,22 +403,116 @@ client.executeCommand(name: string, args: string[], context: any): Promise<boole
 client.on(event: ChannelMessageEvent, listener: () => void): void
 ```
 
-## Helper Classes
+### CommandContext
 
-### CommandHelpers
+Available in command `execute()` and `validate()` methods:
 
 ```typescript
-await context.helpers.reply(message: string);
-await context.helpers.sendMessage(channelId: string, content: string);
-await context.helpers.deleteMessage(messageId: string);
+interface CommandContext<TArgs = unknown> {
+  args: TArgs; // Parsed command arguments
+  ctx: ChannelMessageCreatedEvent & CommandHelperMethods; // Message event with helper methods merged in
+  client: RootServer; // Root server instance
+}
 ```
 
-### EventHelpers
+**Example usage:**
 
 ```typescript
-await context.helpers.sendMessage(channelId: string, content: string);
-await context.helpers.getChannel(channelId: string);
-await context.helpers.getMember(userId: string);
+async execute(context: CommandContext) {
+  // Access event data directly from ctx
+  const userId = context.ctx.userId;
+  const messageContent = context.ctx.messageContent;
+
+  // Helper methods are merged into ctx and available alongside event properties
+  await context.ctx.reply("Hello!", { includeMention: true });
+  const nickname = await context.ctx.getMemberNickname();
+  const mention = await context.ctx.mention();
+
+  // Access parsed arguments
+  const args = context.args;
+
+  // Access the Root server instance
+  const server = context.client;
+}
+```
+
+### EventContext
+
+Available in event `execute()` and `validate()` methods:
+
+```typescript
+interface EventContext<TEventData = unknown> {
+  eventName: RootEventType; // The event type name
+  event: TEventData & EventHelperMethods; // Event data with helper methods merged in
+  rootServer: RootServer; // Root server instance
+}
+```
+
+**Example usage:**
+
+```typescript
+async execute(context: EventContext<ChannelMessageCreatedEvent>) {
+  // Access event data directly
+  const message = context.event.messageContent;
+  const userId = context.event.userId;
+  const channelId = context.event.channelId;
+
+  // Helper methods are merged into event and available alongside event properties
+  await context.event.reply("Hello!");
+  const mention = await context.event.mention(userId);
+  const nickname = await context.event.getMemberNickname(userId);
+
+  // Access event name
+  console.log(`Handling: ${context.eventName}`);
+
+  // Access the Root server instance
+  const server = context.rootServer;
+}
+```
+
+### JobContext
+
+Available in job `execute()` and `validate()` methods:
+
+```typescript
+interface JobContext {
+  resourceId: string;
+  jobTime: number;
+  jobScheduleId: string;
+  tag: string;
+  rootServer: RootServer;
+}
+```
+
+## Helper Methods
+
+### Command Helper Methods
+
+Command helper methods are merged directly into `context.ctx` alongside the event properties:
+
+```typescript
+// In command handlers
+await context.ctx.reply("Hello!"); // Send a reply
+await context.ctx.reply("Hello!", { includeMention: true }); // Reply with mention
+const mention = await context.ctx.mention(); // Get mention for command user
+const nickname = await context.ctx.getMemberNickname(); // Get nickname of command user
+const memberId = context.ctx.member.id; // Access member info
+```
+
+### Event Helper Methods
+
+Event helper methods are merged directly into `context.event` alongside the event properties:
+
+```typescript
+// In event handlers
+await context.event.reply("Hello!"); // Send a reply to the event's channel
+const mention = await context.event.mention(userId); // Get mention markdown for a user
+const nickname = await context.event.getMemberNickname(userId); // Get nickname of a user
+const channelId = context.event.channel.id; // Access channel info
+await context.event.channel.createMessage("Hello!"); // Create message in event's channel
+
+// Access root server instance
+context.rootServer;
 ```
 
 ## Advanced Usage
@@ -401,57 +541,6 @@ const client = new RDXServerApp({
 const client = new RDXServerApp({
   disableHelpCommand: true,
 });
-```
-
-### Development vs Production
-
-```typescript
-const client = new RDXServerApp({
-  baseDir: process.env.NODE_ENV === "production" ? "./dist" : "./src",
-  cmdPrefix: process.env.CMD_PREFIX || "!",
-});
-```
-
-## Best Practices
-
-### 1. **Command Naming**
-
-- Use lowercase names
-- Keep names short and memorable
-- Provide descriptive aliases
-
-
-### 3. **Validation**
-
-```typescript
-validate(context: CommandContext): boolean {
-  if (!context.ctx.userId) {
-    return false;
-  }
-  return true;
-}
-```
-
-### 4. **Cooldowns**
-
-```typescript
-constructor() {
-  super({
-    name: "command",
-    cooldown: 5,
-  });
-}
-```
-
-### 5. **Job Idempotency**
-
-```typescript
-async execute(context: JobContext): Promise<void> {
-  if (await isAlreadyProcessed(context.jobTime)) {
-    return;
-  }
-  await processJob();
-}
 ```
 
 ## Examples

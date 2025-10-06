@@ -1,6 +1,9 @@
 {
   "name": "@rdx.js-example/gen-client",
-  "version": "1.0.1759671324534",
+  "version": "1.0.1759738719636",
+	"dependencies": {
+		"@rdx.js-example/gen-shared": "file:../shared"
+	},
   "main": "./dist/mjs/index.js",
   "typings": "./dist/mjs/index.d.ts",
 	"type": "module",

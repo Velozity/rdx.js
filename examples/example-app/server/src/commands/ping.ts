@@ -13,14 +13,12 @@ export default class PingCommand extends RootCommand<ChannelMessageCreatedEvent>
     });
   }
 
-  async execute(context: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
+  async execute({ ctx }: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
     const start = Date.now();
 
-    await context.helpers.reply("🏓 Pong!", true); // Include @mention at the beginning of the message
+    await ctx.reply("🏓 Pong!", { includeMention: true }); // Include @mention at the beginning of the message
 
     const latency = Date.now() - start;
-    await context.helpers.reply(
-      `${await context.helpers.mention()} ⚡ Response time: ${latency}ms`
-    );
+    await ctx.reply(`${await ctx.mention()} ⚡ Response time: ${latency}ms`); // Another way to send a message and get the mention of a user
   }
 }
