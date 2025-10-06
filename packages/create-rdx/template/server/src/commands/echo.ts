@@ -15,21 +15,22 @@ export default class EchoCommand extends RootCommand {
       ],
       examples: ["echo Hello World!", "echo This is a test"],
       category: "Fun",
-      cooldown: 3, // 3 seconds cooldown
+      cooldown: 3,
     });
   }
 
-  async validate(context: CommandContext): Promise<boolean> {
-    if (context.args.length === 0) {
-      await context.helpers.reply("❌ Please provide a message to echo!");
+  async validate({ ctx, args }: CommandContext): Promise<boolean> {
+    if (args.length === 0) {
+      await ctx.reply("❌ Please provide a message to echo!", { includeMention: true });
       return false;
     }
+
     return true;
   }
 
-  async execute(context: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
-    const message = context.args.join(" ");
+  async execute({ ctx, args }: CommandContext<ChannelMessageCreatedEvent>): Promise<void> {
+    const message = args.join(" ");
 
-    await context.helpers.reply(`🔊 ${message}`);
+    await ctx.reply(`🔊 ${message}`);
   }
 }

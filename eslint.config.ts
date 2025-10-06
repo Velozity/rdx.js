@@ -29,6 +29,15 @@ export default [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", "*.cjs", "*.config.cjs", "*.config.ts", "examples/**", "tests/**", "packages/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "*.cjs",
+      "*.config.cjs",
+      "*.config.ts",
+      "examples/**",
+      "tests/**",
+      "packages/**",
+    ],
   },
 ];

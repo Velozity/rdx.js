@@ -78,7 +78,7 @@ importers:
         version: 9.13.1
       rdx.js:
         specifier: latest
-        version: 1.0.1(@grpc/grpc-js@1.14.0)
+        version: 1.1.0(@grpc/grpc-js@1.14.0)
 
 packages:
 
@@ -1528,8 +1528,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  rdx.js@1.0.1:
-    resolution: {integrity: sha512-BfDs/bHxpwQqzDQ5cy8upaxPeShBXc8n61MJpmTCdZH54HQp7TGrRDqw9aPy2arsOuuSwxAlc0hUQm9re6Xjrg==}
+  rdx.js@1.1.0:
+    resolution: {integrity: sha512-qmOy79aSHa/LaIWLQMixBD7QYmOMdxTFiAQzwYgvFT8T0KMOdq9Gn8U42uDMHybtsBPSLJfASzjzMV46hEjj9w==}
     engines: {node: '>=22'}
 
   react-dom@18.3.1:
@@ -3485,7 +3485,7 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  rdx.js@1.0.1(@grpc/grpc-js@1.14.0):
+  rdx.js@1.1.0(@grpc/grpc-js@1.14.0):
     dependencies:
       '@rootsdk/server-app': 0.15.1(@grpc/grpc-js@1.14.0)
       pino: 9.13.1
