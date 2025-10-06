@@ -1,14 +1,11 @@
-import { ChannelGuid, RootServer, rootServer, UserGuid } from "@rootsdk/server-app";
+import { ChannelGuid, rootServer, UserGuid } from "@rootsdk/server-app";
 
 /**
  * Helper methods for event handlers
  * Provides convenient methods for common operations
  */
 export class EventHelpers {
-  constructor(
-    private channelId: ChannelGuid,
-    private client: RootServer
-  ) {}
+  constructor(private channelId: ChannelGuid) {}
 
   public async mention(userId: string): Promise<string> {
     const nickname = await this.getMemberNickname(userId);
@@ -24,7 +21,7 @@ export class EventHelpers {
   }
 
   async reply(content: string): Promise<void> {
-    await this.client.community.channelMessages.create({
+    await rootServer.community.channelMessages.create({
       channelId: this.channelId,
       content: content,
     });
@@ -41,6 +38,6 @@ export class EventHelpers {
    * Get the original root server client for advanced usage
    */
   get rawClient() {
-    return this.client;
+    return rootServer;
   }
 }

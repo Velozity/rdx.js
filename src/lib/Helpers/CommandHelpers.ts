@@ -2,10 +2,7 @@ import type { ChannelMessageCreatedEvent, CommunityMember } from "@rootsdk/serve
 import { rootServer } from "@rootsdk/server-app";
 
 export class CommandHelpers {
-  constructor(
-    private evt: ChannelMessageCreatedEvent,
-    private client: typeof rootServer
-  ) {}
+  constructor(private evt: ChannelMessageCreatedEvent) {}
 
   public async mention(): Promise<string> {
     const nickname = await this.getMemberNickname();
@@ -32,7 +29,7 @@ export class CommandHelpers {
     const shouldMention = options?.includeMention ?? false;
     const finalContent = shouldMention ? (await this.mention()) + " " + content : content;
 
-    await this.client.community.channelMessages.create({
+    await rootServer.community.channelMessages.create({
       channelId: this.evt.channelId,
       content: finalContent,
     });
@@ -49,7 +46,7 @@ export class CommandHelpers {
    * Get the original root server client for advanced usage
    */
   get rawClient() {
-    return this.client;
+    return rootServer;
   }
 
   /**

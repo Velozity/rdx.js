@@ -284,7 +284,7 @@ class RDXServerApp {
     const listener = (data: unknown) => {
       void (async () => {
         const channelId = (data as any)?.channelId || "";
-        const helpers = new EventHelpers(channelId, rootServer as RootServer);
+        const helpers = new EventHelpers(channelId);
 
         // Merge helpers into the event data
         const eventWithHelpers = Object.assign(
@@ -296,7 +296,7 @@ class RDXServerApp {
         const eventContext: EventContext = {
           eventName: event.event,
           event: eventWithHelpers,
-          rootServer: rootServer as RootServer,
+          rootServer: rootServer,
         };
 
         if (event.validate && !event.validate(eventContext)) {
@@ -365,7 +365,7 @@ class RDXServerApp {
 
     const parsedArgs = command.parseArgs(args);
     if (!parsedArgs.valid) {
-      const helpers = new CommandHelpers(ctx, rootServer as RootServer);
+      const helpers = new CommandHelpers(ctx);
       const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
       await ctxWithHelpers.reply(`❌ ${parsedArgs.error}\n\nUsage: \`!${command.getUsage()}\``);
       return false;
@@ -381,7 +381,7 @@ class RDXServerApp {
     }
 
     try {
-      const helpers = new CommandHelpers(ctx, rootServer as RootServer);
+      const helpers = new CommandHelpers(ctx);
 
       // Merge helpers into ctx
       const ctxWithHelpers = Object.assign(Object.create(CommandHelpers.prototype), ctx, helpers);
