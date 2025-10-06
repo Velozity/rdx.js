@@ -2,8 +2,7 @@ import {
   ChannelMessageCreatedEvent,
   RootEvent,
   RootEventType,
-  type EventContext,
-  rootServer,
+  type EventContext
 } from "rdx.js";
 
 export default class WelcomeEvent extends RootEvent {
@@ -16,13 +15,8 @@ export default class WelcomeEvent extends RootEvent {
 
   async execute({
     data,
-    helpers,
-    rootServer,
+    helpers
   }: EventContext<ChannelMessageCreatedEvent>): Promise<void> {
-    const user = await rootServer.community.communityMembers.get({
-      userId: data.userId,
-    });
-
     const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
     await helpers.reply(randomMessage.replace("{user}", await helpers.mention(data.userId)));

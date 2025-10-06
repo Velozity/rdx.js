@@ -5,13 +5,13 @@
   "description": "Basic app example using rdx.js",
   "main": "dist/index.js",
   "scripts": {
-    "build": "pnpm run build:proto && pnpm exec tsc",
     "build:proto": "cd networking && pnpm run build",
     "dev:client": "cd client && pnpm run dev",
     "dev:server": "cd server && pnpm run dev"
   },
   "dependencies": {
     "@rootsdk/client-app": "*",
+    "@rootsdk/server-app": "*",
     "@rdx.js-example/gen-client": "file:./networking/gen/client",
     "@rdx.js-example/gen-server": "file:./networking/gen/server",
     "@rdx.js-example/gen-shared": "file:./networking/gen/shared"

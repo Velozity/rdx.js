@@ -4,7 +4,7 @@
 
 A powerful, type-safe framework for building Root applications with elegant command, event, and job management systems.
 
-> **Note:** This SDK is exclusively available for Root applications. It requires access to the Root platform and its SDK packages (`@rootsdk/server-app` or `@rootsdk/server-bot`).
+> **Note:** This SDK is exclusively available for Root applications. It requires access to the Root platform and its SDK package `@rootsdk/server-app`. Support for `@rootsdk/server-bot` coming soon.
 
 ## Features
 
@@ -13,10 +13,40 @@ A powerful, type-safe framework for building Root applications with elegant comm
 - ⏰ **Job Scheduler** - Scheduled tasks with cron-like intervals
 - 🔄 **Hot Reload** - Automatic discovery of commands, events, and jobs from your file system
 - 🎨 **Flexible Configuration** - Customizable folder names, prefixes, and options
-- 📦 **Dual SDK Support** - Works with both `@rootsdk/server-app` and `@rootsdk/server-bot`
+- 📦 **Full Stack** - Works with React client and Node.js server with type-safe protocol buffers
 - 🛡️ **Type Safety** - Full TypeScript support with comprehensive type definitions
+- 🚀 **Quick Start** - Create a new project with `npx create-rdx@latest`
 
-## Installation
+## Quick Start
+
+### Get Up & Running in One Command
+
+```bash
+npx create-rdx@latest --app my-app
+```
+
+This will:
+- Create a new project with client, server, and networking setup
+- Install all dependencies
+- Generate protocol buffer types
+- Configure your Root application
+
+### Available Commands
+
+Once your project is created, you can use these commands:
+
+```bash
+# Generate protocol buffer types (already done for you initially)
+pnpm run build:proto
+
+# Start the development server
+pnpm run dev:server
+
+# Start the development client (in a separate terminal)
+pnpm run dev:client
+```
+
+### Manual Installation
 
 ```bash
 npm install rdx.js
@@ -28,7 +58,7 @@ or
 pnpm add rdx.js
 ```
 
-## Quick Start
+## Usage
 
 ### Basic Setup
 
@@ -38,12 +68,12 @@ import { RDXServerApp } from "rdx.js";
 const client = new RDXServerApp({
   cmdPrefix: "!",
   onReady: () => {
-    console.log("Bot is ready!");
+    console.log("Application is ready!");
   },
 });
 ```
 
-### With Services (Server App)
+### With Proto Services
 
 ```typescript
 import { RDXServerApp } from "rdx.js";
@@ -51,7 +81,7 @@ import { MyCustomService } from "./services/MyService";
 
 const client = new RDXServerApp({
   cmdPrefix: "!",
-  services: [new MyCustomService()],
+  services: [MyCustomService],
   onStarting: async () => {
     console.log("Initializing services...");
   },
@@ -60,10 +90,6 @@ const client = new RDXServerApp({
   },
 });
 ```
-
-### For Bots
-
-Coming soon.
 
 ## Configuration Options
 
@@ -109,7 +135,7 @@ export default class PingCommand extends RootCommand {
   constructor() {
     super({
       name: "ping",
-      description: "Check bot latency",
+      description: "Check application latency",
       aliases: ["pong"],
       cooldown: 3000,
     });
@@ -126,11 +152,11 @@ export default class PingCommand extends RootCommand {
 ```typescript
 import { RootCommand, type CommandContext } from "rdx.js";
 
-export default class SayCommand extends RootCommand<{ message: string }> {
+export default class SayCommand extends RootCommand {
   constructor() {
     super({
       name: "say",
-      description: "Make the bot say something",
+      description: "Make the application say something",
       args: [
         {
           name: "message",
@@ -142,7 +168,7 @@ export default class SayCommand extends RootCommand<{ message: string }> {
     });
   }
 
-  async execute(context: CommandContext<{ message: string }>): Promise<void> {
+  async execute(context: CommandContext): Promise<void> {
     await context.helpers.reply(context.args.message);
   }
 }
@@ -151,7 +177,7 @@ export default class SayCommand extends RootCommand<{ message: string }> {
 ### Command with Validation
 
 ```typescript
-export default class KickCommand extends RootCommand<{ userId: string }> {
+export default class KickCommand extends RootCommand {
   constructor() {
     super({
       name: "kick",
@@ -160,20 +186,23 @@ export default class KickCommand extends RootCommand<{ userId: string }> {
     });
   }
 
-  async validate(context: CommandContext<{ userId: string }>): Promise<boolean> {
+  async validate(context: CommandContext): Promise<boolean> {
     const hasPermission = await checkModeratorPermission(context.ctx.userId);
     if (!hasPermission) {
-      await context.helpers.reply("❌ You don't have permission!");
+      await context.helpers.reply("❌ You don't have permission!", true);
       return false;
     }
     return true;
   }
 
-  async execute(context: CommandContext<{ userId: string }>): Promise<void> {
-    await context.client.community.communityMembers.remove({
-      userId: context.args.userId,
+  async execute({ rootServer, helpers, args }: CommandContext): Promise<void> {
+    await rootServer.community.communityMemberBans.kick({
+      userId: args.userId,
     });
-    await context.helpers.reply("✅ User kicked!");
+
+    // or you can import rootServer from the rdx.js package
+    
+    await helpers.reply("✅ User kicked!");
   }
 }
 ```
@@ -185,7 +214,7 @@ Events are automatically discovered from `/events` folders in your project.
 ### Basic Event
 
 ```typescript
-import { RootEvent, RootEventType, type EventContext } from "rdx.js";
+import { RootEvent, RootEventType, type EventContext, type ChannelMessageCreatedEvent } from "rdx.js";
 
 export default class MessageCreated extends RootEvent {
   constructor() {
@@ -195,7 +224,7 @@ export default class MessageCreated extends RootEvent {
     });
   }
 
-  async execute(context: EventContext): Promise<void> {
+  async execute(context: EventContext<ChannelMessageCreatedEvent>): Promise<void> {
     console.log("Message received:", context.data.messageContent);
   }
 }
@@ -212,7 +241,7 @@ export default class MemberJoined extends RootEvent {
     });
   }
 
-  validate(context: EventContext): boolean {
+  validate(context: EventContext<CommunityJoinedEvent>): boolean {
     return !context.data.userId.includes("bot");
   }
 
@@ -246,31 +275,6 @@ export default class DailyBackup extends RootJob {
     console.log("Running daily backup...");
     await performBackup();
     console.log("Backup completed!");
-  }
-}
-```
-
-### Hourly Job with Validation
-
-```typescript
-export default class CacheSync extends RootJob {
-  constructor() {
-    super({
-      tag: "cache-sync",
-      resourceId: "cache",
-      start: new Date(),
-      jobInterval: JobInterval.Hourly,
-      enabled: true,
-    });
-  }
-
-  validate(context: JobContext): boolean {
-    const hour = context.jobTime.getHours();
-    return hour >= 6 && hour <= 22;
-  }
-
-  async execute(context: JobContext): Promise<void> {
-    await syncCacheToDatabase();
   }
 }
 ```
@@ -319,7 +323,7 @@ This will discover:
 
 ## SDK Selection
 
-### RDXServerApp (Full Applications)
+### RDXServerApp (Server Applications)
 
 Use for complete Root server applications with service management:
 
@@ -339,24 +343,7 @@ const app = new RDXServerApp({
 - ✅ Client management
 - ✅ Recommended for production applications
 
-### RDXServerBot (Lightweight Bots)
-
-Use for standalone bots without service management:
-
-```typescript
-import { RDXServerBot } from "rdx.js";
-
-const bot = new RDXServerBot({
-  cmdPrefix: "!",
-});
-```
-
-**Features:**
-
-- ✅ Lightweight and fast
-- ✅ Bot-focused SDK
-- ✅ No service overhead
-- ✅ Recommended for simple bots
+> **Note:** Support for `@rootsdk/server-bot` coming soon.
 
 ## API Reference
 
@@ -370,40 +357,6 @@ client.getJobs(): Map<string, RootJob>
 client.getCommandPrefix(): string
 client.executeCommand(name: string, args: string[], context: any): Promise<boolean>
 client.on(event: ChannelMessageEvent, listener: () => void): void
-```
-
-### CommandContext
-
-```typescript
-interface CommandContext<TArgs = unknown> {
-  args: TArgs;
-  ctx: ChannelMessageCreatedEvent;
-  client: RootServer;
-  helpers: CommandHelpers;
-}
-```
-
-### EventContext
-
-```typescript
-interface EventContext<TEventData = unknown> {
-  event: ChannelMessageEvent;
-  data: TEventData;
-  rootServer: RootServer;
-  helpers: EventHelpers;
-}
-```
-
-### JobContext
-
-```typescript
-interface JobContext {
-  resourceId: string;
-  jobTime: number;
-  jobScheduleId: string;
-  tag: string;
-  rootServer: RootServer;
-}
 ```
 
 ## Helper Classes
@@ -444,7 +397,7 @@ const client = new RDXServerApp({
 });
 ```
 
-### Disable Built-in Help
+### Disable Built-in !help Command
 
 ```typescript
 const client = new RDXServerApp({
@@ -469,18 +422,6 @@ const client = new RDXServerApp({
 - Keep names short and memorable
 - Provide descriptive aliases
 
-### 2. **Error Handling**
-
-```typescript
-async execute(context: CommandContext): Promise<void> {
-  try {
-    await riskyOperation();
-  } catch (error) {
-    await context.helpers.reply("❌ Something went wrong!");
-    console.error(error);
-  }
-}
-```
 
 ### 3. **Validation**
 
@@ -499,7 +440,7 @@ validate(context: CommandContext): boolean {
 constructor() {
   super({
     name: "command",
-    cooldown: 5000,
+    cooldown: 5,
   });
 }
 ```
@@ -519,10 +460,10 @@ async execute(context: JobContext): Promise<void> {
 
 Check out the `/examples` directory for complete working examples:
 
-- **Basic Bot** - Simple command bot
-- **Moderation Bot** - Kick/ban commands with permissions
-- **Levels System** - XP and leveling with jobs
-- **Welcome Bot** - Member join/leave events
+- **Example App** - Full-stack application with client and server
+- **Moderation Commands** - Kick/ban commands with permissions
+- **Event Handlers** - Welcome messages and event handling
+- **Scheduled Jobs** - Daily reports and background tasks
 
 ## Troubleshooting
 
@@ -546,14 +487,14 @@ Check out the `/examples` directory for complete working examples:
 
 ## Requirements
 
-- Node.js >= 18
+- Node.js >= 22
 - TypeScript >= 5.0
-- Root SDK (`@rootsdk/server-app` or `@rootsdk/server-bot`)
-- Active Root application access
+- Root SDK (`@rootsdk/server-app`)
+- Root App Application ID & DEV_TOKEN
 
 ## License
 
-Private - Root Applications Only
+MIT
 
 ## Support
 
@@ -565,4 +506,4 @@ This SDK is available exclusively for Root applications. For support:
 
 ---
 
-**Built for Root** | **Type-Safe** | **Production Ready**
+**Built for Root** | **Type-Safe**

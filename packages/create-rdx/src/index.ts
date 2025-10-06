@@ -12,15 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const program = new Command();
-program.name("create-rdx").version("1.0.0").argument("[app]").action(async (name) => {
+program.name("create-rdx").version("1.0.0").option("--app <name>", "Project name").action(async (options) => {
   console.log(chalk.cyan(" create-rdx"));
   const answers = await prompts([
-    { type: name ? null : "text", name: "projectName", message: "Project name?", initial: "my-app" },
+    { type: options.app ? null : "text", name: "projectName", message: "Project name?", initial: "my-app" },
     { type: "text", name: "appId", message: "Application ID (https://dev.rootapp.com/apps)?", validate: v => v.length > 5 },
     { type: "text", name: "devToken", message: "DEV_TOKEN (https://dev.rootapp.com/apps)?", validate: v => v.length > 5 },
     { type: "select", name: "pm", message: "Package manager?", choices: [{ title: "pnpm", value: "pnpm" }], initial: 0 }
   ]);
-  let projName = name || answers.projectName;
+  let projName = options.app || answers.projectName;
   projName = projName.replace("@", "");
 
   const targetDir = path.resolve(process.cwd(), projName);
@@ -104,10 +104,19 @@ program.name("create-rdx").version("1.0.0").argument("[app]").action(async (name
     await execa(answers.pm, ["install"], { cwd: targetDir, stdio: "inherit" });
     spinner.succeed("Dependencies installed!");
     
+    // Build proto files
+    spinner.start("Building protocol buffers...");
+    await execa(answers.pm, ["run", "build:initial"], { cwd: path.join(targetDir, "networking"), stdio: "inherit" });
+    spinner.succeed("Protocol buffers built!");
+    
+    // Install dependencies again to link the generated packages
+    spinner.start("Linking generated packages...");
+    await execa(answers.pm, ["install"], { cwd: targetDir, stdio: "inherit" });
+    spinner.succeed("Generated packages linked!");
+    
     console.log(chalk.green("\n✨ Project created successfully!\n"));
     console.log(chalk.cyan("Next steps:\n"));
     console.log(`  cd ${chalk.bold(projName)}`);
-    console.log(`  ${chalk.bold(answers.pm + " run build:proto")}  ${chalk.dim("# Generate protocol buffers")}`);
     console.log(`  ${chalk.bold(answers.pm + " run dev:server")}   ${chalk.dim("# Start the server")}`);
     console.log(`  ${chalk.bold(answers.pm + " run dev:client")}   ${chalk.dim("# Start the client (in a new terminal)")}\n`);
   } catch (e) {

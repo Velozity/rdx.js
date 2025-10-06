@@ -22,5 +22,5 @@
     "rootDir": "src"
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["node_modules", ".turbo", "dist", "tests", "examples", "templates"]
+  "exclude": ["node_modules", ".turbo", "dist", "tests", "examples", "packages/**/template/**/*"]
 }

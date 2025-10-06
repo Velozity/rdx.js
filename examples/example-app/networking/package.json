@@ -4,6 +4,7 @@
     "@protobuf-ts/runtime": "^2.11.1"
   },
   "scripts": {
+    "build:initial": "cd gen/shared && tsc && cd ../../ && pnpm i && pnpm run build",
     "build": "rootsdk build proto"
   }
 }
