@@ -12,9 +12,7 @@ A powerful, type-safe framework for building Root applications with elegant comm
 - 🎯 **Command System** - Auto-discovered commands with argument parsing, validation, and cooldowns
 - 📡 **Event Handlers** - Type-safe event listeners with helper utilities
 - ⏰ **Job Scheduler** - Scheduled tasks with cron-like intervals
-- 🔄 **Hot Reload** - Automatic discovery of commands, events, and jobs from your file system
 - 🎨 **Flexible Configuration** - Customizable folder names, prefixes, and options
-- 📦 **Full Stack** - Works with React client and Node.js server with type-safe protocol buffers
 - 🛡️ **Type Safety** - Full TypeScript support with comprehensive type definitions
 - 🚀 **Quick Start** - Create a new project with `npx create-rdx@latest`
 
@@ -65,6 +63,7 @@ pnpm add rdx.js @rootsdk/server-app
 ### Basic Setup
 
 ```typescript
+// main.ts
 import { RDXServerApp } from "rdx.js";
 
 const client = new RDXServerApp({
@@ -78,6 +77,7 @@ const client = new RDXServerApp({
 ### With Proto Services
 
 ```typescript
+// main.ts
 import { RDXServerApp } from "rdx.js";
 import { EchoService } from "./services/echo.service";
 
@@ -94,23 +94,6 @@ const client = new RDXServerApp({
 ```
 
 ## Configuration Options
-
-```typescript
-type RootClientOptions = {
-  cmdPrefix?: string;
-  baseDir?: string;
-  commandsFolderName?: string;
-  eventsFolderName?: string;
-  jobsFolderName?: string;
-  disableHelpCommand?: boolean;
-  services?: RootServerService[];
-  loader?: LoaderOptions;
-  onStarting?: () => void | Promise<void>;
-  onReady?: () => void | Promise<void>;
-};
-```
-
-### Option Details
 
 | Option               | Type                  | Default       | Description                            |
 | -------------------- | --------------------- | ------------- | -------------------------------------- |
@@ -131,6 +114,7 @@ Commands are automatically discovered from `/commands` folders in your project.
 ### Basic Command
 
 ```typescript
+// commands/PingCommand.ts
 import { RootCommand, type CommandContext } from "rdx.js";
 
 export default class PingCommand extends RootCommand {
@@ -153,6 +137,7 @@ export default class PingCommand extends RootCommand {
 ### Command with Arguments
 
 ```typescript
+// commands/SayCommand.ts
 import { RootCommand, type CommandContext } from "rdx.js";
 
 export default class SayCommand extends RootCommand {
@@ -180,6 +165,7 @@ export default class SayCommand extends RootCommand {
 ### Command with Validation
 
 ```typescript
+// commands/KickCommand.ts
 export default class KickCommand extends RootCommand {
   constructor() {
     super({
@@ -252,6 +238,7 @@ Events are automatically discovered from `/events` folders in your project.
 ### Basic Event
 
 ```typescript
+// events/OnMessageCreated.ts
 import {
   RootEvent,
   RootEventType,
@@ -278,6 +265,7 @@ export default class MessageCreated extends RootEvent {
 ### Event with Validation
 
 ```typescript
+// events/OnMemberJoined.ts
 export default class MemberJoined extends RootEvent {
   constructor() {
     super({
@@ -304,6 +292,7 @@ Jobs are automatically discovered from `/jobs` folders in your project.
 ### Daily Job
 
 ```typescript
+// jobs/DailyBackup.ts
 import { JobInterval, RootJob, type JobContext } from "rdx.js";
 
 export default class DailyBackup extends RootJob {
@@ -374,6 +363,7 @@ This will discover:
 Use for complete Root server applications with service management:
 
 ```typescript
+// main.ts
 import { RDXServerApp } from "rdx.js";
 
 const app = new RDXServerApp({
@@ -382,13 +372,6 @@ const app = new RDXServerApp({
 });
 ```
 
-**Features:**
-
-- ✅ Service lifecycle management
-- ✅ Full Root SDK features
-- ✅ Client management
-- ✅ Recommended for production applications
-
 > **Note:** Support for `@rootsdk/server-bot` coming soon.
 
 ## API Reference
@@ -396,13 +379,14 @@ const app = new RDXServerApp({
 ### Client Methods
 
 ```typescript
+const client = new RDXServerApp();
+
 client.getCommand(name: string): RootCommand | undefined
 client.getCommands(): Map<string, RootCommand>
 client.getEvents(): Map<string, RootEvent>
 client.getJobs(): Map<string, RootJob>
 client.getCommandPrefix(): string
 client.executeCommand(name: string, args: string[], context: any): Promise<boolean>
-client.on(event: ChannelMessageEvent, listener: () => void): void
 ```
 
 ### CommandContext
@@ -410,7 +394,7 @@ client.on(event: ChannelMessageEvent, listener: () => void): void
 Available in command `execute()` and `validate()` methods:
 
 ```typescript
-interface CommandContext<TArgs = unknown> {
+interface CommandContext<TArgs = ChannelMessageCreatedEvent> {
   args: TArgs; // Parsed command arguments
   ctx: ChannelMessageCreatedEvent & CommandHelperMethods; // Message event with helper methods merged in
   client: RootServer; // Root server instance
@@ -420,21 +404,21 @@ interface CommandContext<TArgs = unknown> {
 **Example usage:**
 
 ```typescript
-async execute(context: CommandContext) {
+async execute({ ctx, args }: CommandContext) {
   // Access event data directly from ctx
-  const userId = context.ctx.userId;
-  const messageContent = context.ctx.messageContent;
+  const userId = ctx.userId;
+  const messageContent = ctx.messageContent;
 
   // Helper methods are merged into ctx and available alongside event properties
-  await context.ctx.reply("Hello!", { includeMention: true });
-  const nickname = await context.ctx.getMemberNickname();
-  const mention = await context.ctx.mention();
+  await ctx.reply("Hello!", { includeMention: true });
+  const nickname = await ctx.getMemberNickname();
+  const mention = await ctx.mention();
 
   // Access parsed arguments
-  const args = context.args;
+  const firstArg = args[0];
 
   // Access the Root server instance
-  const server = context.client;
+  const server = context.rootServer; // or just use import rootServer from the SDK
 }
 ```
 
@@ -524,24 +508,6 @@ context.rootServer;
 ```typescript
 const client = new RDXServerApp({
   baseDir: "./dist",
-});
-```
-
-### Multiple Command Directories
-
-```typescript
-const client = new RDXServerApp({
-  loader: {
-    commandsDir: ["./dist/commands", "./dist/plugins/commands"],
-  },
-});
-```
-
-### Disable Built-in !help Command
-
-```typescript
-const client = new RDXServerApp({
-  disableHelpCommand: true,
 });
 ```
 
