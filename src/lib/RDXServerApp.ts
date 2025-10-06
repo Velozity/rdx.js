@@ -316,17 +316,20 @@ class RDXServerApp {
     const eventEmitter = this.getEventEmitter(eventValue);
 
     if (event.once) {
-      (eventEmitter as any).once(eventValue, listener);
+      eventEmitter.once(eventValue, listener);
     } else {
-      (eventEmitter as any).on(eventValue, listener);
+      eventEmitter.on(eventValue, listener);
     }
   }
 
-  private getEventEmitter(eventValue: any): any {
+  private getEventEmitter(eventValue: any): any & {
+    on: (event: string, listener: (...args: any[]) => void) => void;
+    once: (event: string, listener: (...args: any[]) => void) => void;
+  } {
     if (Object.values(ChannelMessageEvent).includes(eventValue)) {
       return rootServer.community.channelMessages;
     } else if (Object.values(CommunityEvent).includes(eventValue)) {
-      return rootServer.community;
+      return rootServer.community.communities;
     } else if (Object.values(CommunityMemberBanEvent).includes(eventValue)) {
       return rootServer.community.communityMemberBans;
     } else if (Object.values(CommunityMemberEvent).includes(eventValue)) {

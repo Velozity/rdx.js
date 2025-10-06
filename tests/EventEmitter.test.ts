@@ -7,6 +7,7 @@ import {
   ChannelEvent,
   ChannelGroupEvent,
   ChannelDirectoryEvent,
+  rootServer,
 } from "@rootsdk/server-app";
 import { RootEventMap } from "../src/lib/Types/RootEventType";
 
@@ -130,10 +131,9 @@ describe("Event Emitter Mapping", () => {
     const sdkEventValues = Object.values(RootEventMap);
     const uniqueValues = new Set(sdkEventValues);
 
-    expect(
-      sdkEventValues.length,
-      "RootEventMap should not have duplicate SDK event values"
-    ).toBe(uniqueValues.size);
+    expect(sdkEventValues.length, "RootEventMap should not have duplicate SDK event values").toBe(
+      uniqueValues.size
+    );
   });
 
   it("should ensure getEventEmitter can handle all mapped events", () => {
@@ -176,6 +176,33 @@ describe("Event Emitter Mapping", () => {
         categoryCount,
         `${rootEventType} (${sdkEventValue}) should belong to exactly one SDK event enum, but belongs to ${categoryCount}`
       ).toBe(1);
+    });
+  });
+
+  it("should have 'on' and 'once' methods on all event emitters", () => {
+    // Check that rootServer has the expected structure
+    expect(rootServer.community).toBeDefined();
+
+    const emitters = [
+      { name: "channelMessages", emitter: rootServer.community.channelMessages },
+      { name: "communities", emitter: rootServer.community.communities },
+      { name: "communityMemberBans", emitter: rootServer.community.communityMemberBans },
+      { name: "communityMembers", emitter: rootServer.community.communityMembers },
+      { name: "channels", emitter: rootServer.community.channels },
+      { name: "channelGroups", emitter: rootServer.community.channelGroups },
+      { name: "channelDirectories", emitter: rootServer.community.channelDirectories },
+    ];
+
+    emitters.forEach(({ name, emitter }) => {
+      // Skip if emitter is undefined (not initialized in test environment)
+      if (!emitter) {
+        console.log(`Skipping ${name} - not initialized in test environment`);
+        return;
+      }
+
+      expect(typeof emitter.on, `${name} emitter should have an 'on' method`).toBe("function");
+
+      expect(typeof emitter.once, `${name} emitter should have an 'once' method`).toBe("function");
     });
   });
 });
