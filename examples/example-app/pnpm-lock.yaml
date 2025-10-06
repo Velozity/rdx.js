@@ -17,6 +17,9 @@ importers:
       '@rdx.js-example/gen-shared':
         specifier: file:./networking/gen/shared
         version: file:networking/gen/shared
+      '@rootsdk/client-app':
+        specifier: '*'
+        version: 0.15.1
     devDependencies:
       '@rootsdk/dev-tools':
         specifier: '*'
@@ -59,7 +62,11 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(typescript@5.9.3)(vite@5.4.20(@types/node@22.18.8))
 
-  networking: {}
+  networking:
+    dependencies:
+      '@protobuf-ts/runtime':
+        specifier: ^2.11.1
+        version: 2.11.1
 
   server:
     dependencies:

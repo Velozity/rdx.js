@@ -11,6 +11,8 @@
     "dev:server": "cd server && pnpm run dev"
   },
   "dependencies": {
+    "@rootsdk/client-app": "*",
+    "@rootsdk/server-app": "*",
     "@rdx.js-example/gen-client": "file:./networking/gen/client",
     "@rdx.js-example/gen-server": "file:./networking/gen/server",
     "@rdx.js-example/gen-shared": "file:./networking/gen/shared"
