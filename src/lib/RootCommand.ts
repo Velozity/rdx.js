@@ -31,7 +31,6 @@ export interface CommandOptions {
   examples?: string[];
   category?: string;
   cooldown?: number; // in seconds
-  permissions?: string[];
 }
 
 export interface CommandContext<TEvent = ChannelMessageCreatedEvent> {
@@ -55,7 +54,6 @@ export abstract class RootCommand<TEvent = ChannelMessageCreatedEvent> {
   public readonly examples: string[];
   public readonly category: string;
   public readonly cooldown: number;
-  public readonly permissions: string[];
 
   constructor(options: CommandOptions) {
     this.name = options.name;
@@ -66,7 +64,6 @@ export abstract class RootCommand<TEvent = ChannelMessageCreatedEvent> {
     this.examples = options.examples ?? [];
     this.category = options.category ?? "General";
     this.cooldown = options.cooldown ?? 0;
-    this.permissions = options.permissions ?? [];
   }
 
   /**

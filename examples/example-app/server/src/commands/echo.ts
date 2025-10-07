@@ -1,5 +1,4 @@
 import { RootCommand, type CommandContext } from "rdx.js";
-import type { ChannelMessageCreatedEvent } from "@rootsdk/server-app";
 
 export default class EchoCommand extends RootCommand {
   constructor() {

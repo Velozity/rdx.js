@@ -1,4 +1,5 @@
-import { ChannelMessageCreatedEvent, RootEvent, RootEventType, type EventContext } from "rdx.js";
+import { ChannelMessageCreatedEvent } from "@rootsdk/server-app";
+import { RootEvent, RootEventType, type EventContext } from "rdx.js";
 
 export default class WelcomeEvent extends RootEvent<ChannelMessageCreatedEvent> {
   constructor() {

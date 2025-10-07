@@ -5,10 +5,9 @@
   "description": "Basic app example using rdx.js",
   "main": "dist/main.js",
   "scripts": {
-    "build": "pnpm run clean && pnpm exec tsc",
+    "build": "tsc",
     "start": "rootsdk start devhost --project-folder=..",
-    "dev": "pnpm run build && pnpm run start",
-    "clean": "(rimraf dist 2>nul || rm -rf dist 2>/dev/null || true) || node -e \"require('fs').rmSync('dist', {recursive: true, force: true})\""
+    "dev": "pnpm run start"
   },
   "dependencies": {
     "pino": "^9.11.0",

@@ -1,4 +1,5 @@
-import { RootJob, type JobContext, JobInterval } from "rdx.js";
+import { RootJob, type JobContext } from "rdx.js";
+import { JobInterval } from "@rootsdk/server-app";
 
 export default class DailyReportJob extends RootJob {
   constructor() {

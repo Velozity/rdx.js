@@ -33,7 +33,7 @@ type RootClientOptions = {
   onReady?: () => void | Promise<void>;
   services?: RootServerService[];
   loader?: LoaderOptions;
-  cmdPrefix?: string;
+  cmdPrefix?: string | (() => Promise<string>);
   baseDir?: string;
   commandsFolderName?: string;
   eventsFolderName?: string;
@@ -49,7 +49,7 @@ class RDXServerApp {
   private events = new Map<string, RootEvent>();
   private jobs = new Map<string, RootJob>();
   private commandCooldowns = new Map<string, number>();
-  private cmdPrefix: string;
+  private cmdPrefix: string | (() => Promise<string>);
   private disableHelpCommand: boolean;
   private jobListenerRegistered = false;
 
@@ -144,19 +144,23 @@ class RDXServerApp {
 
   private setupMessageHandler(): void {
     rootServer.community.channelMessages.on(ChannelMessageEvent.ChannelMessageCreated, (evt) => {
-      if (!evt.messageContent.startsWith(this.cmdPrefix)) {
-        return;
-      }
+      void (async () => {
+        const prefix = await this.getCmdPrefix();
 
-      const content = evt.messageContent.slice(this.cmdPrefix.length).trim();
-      const args = content.split(/\s+/);
-      const commandName = args.shift()?.toLowerCase();
+        if (!evt.messageContent.startsWith(prefix)) {
+          return;
+        }
 
-      if (!commandName) {
-        return;
-      }
+        const content = evt.messageContent.slice(prefix.length).trim();
+        const args = content.split(/\s+/);
+        const commandName = args.shift()?.toLowerCase();
 
-      void this.executeCommand(commandName, args, evt);
+        if (!commandName) {
+          return;
+        }
+
+        await this.executeCommand(commandName, args, evt);
+      })();
     });
   }
 
@@ -437,8 +441,15 @@ class RDXServerApp {
     return this.jobs;
   }
 
-  public getCommandPrefix(): string {
+  private async getCmdPrefix(): Promise<string> {
+    if (typeof this.cmdPrefix === "function") {
+      return await this.cmdPrefix();
+    }
     return this.cmdPrefix;
+  }
+
+  public async getCommandPrefix(): Promise<string> {
+    return await this.getCmdPrefix();
   }
 
   on<T extends keyof EventsMap>(event: T, listener: EventsMap[T]) {

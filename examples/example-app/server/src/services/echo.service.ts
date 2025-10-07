@@ -1,7 +1,6 @@
-
 import { EchoRequest, EchoResponse, EchoEvent } from "@rdx.js-example/gen-shared";
 import { EchoServiceBase } from "@rdx.js-example/gen-server";
-import { Client } from "rdx.js";
+import { Client } from "@rootsdk/server-app";
 
 export class EchoService extends EchoServiceBase {
   async echo(request: EchoRequest, client: Client): Promise<EchoResponse> {
