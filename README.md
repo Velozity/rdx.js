@@ -1,6 +1,6 @@
 # rdx.js
 
-> **Root Development Experience** – A clean, file-driven framework for building Root applications with commands, events, jobs and services.
+> **Root Development Experience** – A clean, file-system based framework for building Root applications with commands, events, jobs and services.
 
 Retrieve your Application ID & Dev Token at https://dev.rootapp.com/apps
 
