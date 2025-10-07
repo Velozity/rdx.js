@@ -1,12 +1,12 @@
 # rdx.js
 
-> **Root Development Experience** – A clean framework for building Root applications with commands, events, and jobs.
+> **Root Development Experience** – A clean, file-driven framework for building Root applications with commands, events, jobs and services.
 
 Retrieve your Application ID & Dev Token at https://dev.rootapp.com/apps
 
 ## Features
 
-- 🎯 **Command System** - Auto-discovered commands with validation and cooldowns
+- 🎯 **Command System** - Auto-discovered commands with validation, cooldowns and usage
 - 📡 **Event Handlers** - Type-safe event listeners
 - ⏰ **Job Scheduler** - Scheduled background tasks
 - 🛡️ **Type Safety** - Full TypeScript support
@@ -157,13 +157,8 @@ Create an event in `server/src/events/`:
 
 ```typescript
 // server/src/events/welcome.ts
-import {
-  RootEvent,
-  RootEventType,
-  type EventContext,
-  type ChannelMessageCreatedEvent,
-} from "rdx.js";
-import { rootServer } from "@rootsdk/server-app";
+import { RootEvent, RootEventType, type EventContext } from "rdx.js";
+import { rootServer, type ChannelMessageCreatedEvent } from "@rootsdk/server-app";
 
 export default class WelcomeEvent extends RootEvent<ChannelMessageCreatedEvent> {
   constructor() {
@@ -194,22 +189,14 @@ super({
 });
 ```
 
-### Available Event Types
-
-Use `RootEventType` for all available events:
-
-- `ChannelMessageCreated`, `ChannelMessageEdited`, `ChannelMessageDeleted`
-- `CommunityMemberJoined`, `CommunityMemberLeft`
-- `ChannelCreated`, `ChannelDeleted`, `ChannelEdited`
-- And many more! Check your IDE autocomplete for the full list.
-
 ## Jobs
 
 Create a job in `server/src/jobs/`:
 
 ```typescript
 // server/src/jobs/daily-backup.ts
-import { RootJob, JobInterval, type JobContext } from "rdx.js";
+import { RootJob, type JobContext } from "rdx.js";
+import { JobInterval } from "@rootsdk/server-app";
 
 export default class DailyBackup extends RootJob {
   constructor() {
