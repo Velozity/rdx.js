@@ -1,5 +1,6 @@
 import "dotenv/config";
-import { RDXServerApp, RootServerService } from "rdx.js";
+import { RDXServerApp } from "rdx.js";
+import { RootServerService } from "@rootsdk/server-app";
 import { echoService } from "./services/echo.service";
 
 // List of services to register
