@@ -9,6 +9,7 @@ Retrieve your Application ID & Dev Token at https://dev.rootapp.com/apps
 - 🎯 **Command System** - Auto-discovered commands with validation, cooldowns and usage
 - 📡 **Event Handlers** - Type-safe event listeners
 - ⏰ **Job Scheduler** - Scheduled background tasks
+- 📁 **File-System Based** - Keep your workspace clean and scalable
 - 🛡️ **Type Safety** - Full TypeScript support
 - 🚀 **Quick Start** - Create a new project with `npx create-rdx@latest`
 
