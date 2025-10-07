@@ -1,6 +1,6 @@
 {
   "name": "create-rdx",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Create a new rdx.js application with a single command",
   "type": "module",
   "bin": {
