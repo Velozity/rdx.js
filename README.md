@@ -42,27 +42,14 @@ const app = new RDXServerApp({
 });
 ```
 
-### Dynamic Command Prefix
-
-You can provide an async function to retrieve the prefix dynamically (e.g., from a database):
-
-```typescript
-const app = new RDXServerApp({
-  cmdPrefix: async () => {
-    // Retrieve from database, cache, etc.
-    const prefix = await db.getPrefix();
-    return prefix;
-  },
-});
-```
-
-> **Note:** The async function is called every time a message is received to check the prefix.
-
 ## Configuration
 
 ```typescript
 const app = new RDXServerApp({
-  cmdPrefix: "!", // Command prefix (string or async function)
+  cmdPrefix: "!", // Command prefix - Note: You can use an async function here to dynamically retrieve it
+  // cmdPrefix: async () => {
+  // return await rootServer.dataStore.appData.get("prefix");
+  // }
   commandsFolderName: "commands", // Commands folder name (default: commands)
   eventsFolderName: "events", // Events folder name (default: events)
   jobsFolderName: "jobs", // Jobs folder name (default: jobs)
@@ -140,7 +127,6 @@ super({
   examples: ["ping", "ping hello"], // Example usages (optional)
   category: "Utility", // Command category (optional, default: "General")
   cooldown: 3, // Cooldown in seconds (optional, default: 0)
-  permissions: ["admin"], // Required permissions (optional)
 });
 ```
 
