@@ -9,7 +9,7 @@ import {
   ChannelDirectoryEvent,
   rootServer,
 } from "@rootsdk/server-app";
-import { RootEventMap } from "../src/lib/Types/RootEventType";
+import { RootEventMap, RootEventType } from "../src/lib/Types/RootEventType";
 
 describe("Event Emitter Mapping", () => {
   it("should have all RootEventMap values correspond to valid SDK events", () => {
@@ -30,6 +30,20 @@ describe("Event Emitter Mapping", () => {
         `Event ${sdkEventValue} should be a valid SDK event`
       ).toBe(true);
     });
+  });
+
+  it("should keep RootEventType aligned with RootEventMap keys", () => {
+    const rootEventMapKeys = Object.keys(RootEventMap).sort();
+    const rootEventTypeKeys = Object.keys(RootEventType).sort();
+    const rootEventTypeValues = Object.values(RootEventType).sort();
+
+    expect(rootEventTypeKeys, "RootEventType keys should mirror RootEventMap keys").toEqual(
+      rootEventMapKeys
+    );
+
+    expect(rootEventTypeValues, "RootEventType values should mirror RootEventMap keys").toEqual(
+      rootEventMapKeys
+    );
   });
 
   it("should map ChannelMessageEvent types correctly", () => {
