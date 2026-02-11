@@ -1,4 +1,4 @@
-import type { ChannelMessageCreatedEvent, RootServer } from "@rootsdk/server-app";
+import type { ChannelMessage, ChannelMessageCreatedEvent, RootServer } from "@rootsdk/server-app";
 
 /**
  * Public API of CommandHelpers that gets merged into ctx
@@ -6,7 +6,7 @@ import type { ChannelMessageCreatedEvent, RootServer } from "@rootsdk/server-app
 export interface CommandHelperMethods {
   mention(): Promise<string>;
   getMemberNickname(): Promise<string>;
-  reply(content: string, options?: { includeMention?: boolean }): Promise<void>;
+  reply(content: string, options?: { includeMention?: boolean }): Promise<ChannelMessage>;
   readonly member: {
     id: string;
     mention: () => Promise<string>;

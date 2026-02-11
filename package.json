@@ -41,7 +41,7 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "@rootsdk/server-app": "*"
+    "@rootsdk/server-app": "^0.17.0"
   },
   "dependencies": {
     "pino": "^9.11.0",

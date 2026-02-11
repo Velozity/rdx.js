@@ -9,11 +9,14 @@ importers:
   .:
     dependencies:
       '@rootsdk/server-app':
-        specifier: '*'
-        version: 0.15.1(@grpc/grpc-js@1.14.0)
+        specifier: ^0.17.0
+        version: 0.17.0(@grpc/grpc-js@1.14.0)
       pino:
         specifier: ^9.11.0
         version: 9.13.1
+      pino-pretty:
+        specifier: ^13.1.1
+        version: 13.1.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.17.0
@@ -30,9 +33,6 @@ importers:
       jiti:
         specifier: ^2.6.1
         version: 2.6.1
-      pino-pretty:
-        specifier: ^13.1.1
-        version: 13.1.1
       prettier:
         specifier: ^3.4.2
         version: 3.6.2
@@ -432,8 +432,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rootsdk/server-app@0.15.1':
-    resolution: {integrity: sha512-YZiDESZp3SI8QW+8vjzTt4+3i9TxTZfdnRt40KnbvzCs/IsnZMnFgXd+p4OdOvoejuac1j0Wx2L82Po29ZCftA==}
+  '@rootsdk/server-app@0.17.0':
+    resolution: {integrity: sha512-KReWodd5DH35UE+dEw1iTSuJVWUN12M5zwJr9XkOmW/YsFN5Y9V2ouXKxeone0UWwLRpIzoVf1USSVG9YO0K8A==}
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -923,7 +923,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
@@ -1542,6 +1542,7 @@ packages:
   tar@6.2.1:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   tarn@3.0.2:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
@@ -2006,7 +2007,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.52.4':
     optional: true
 
-  '@rootsdk/server-app@0.15.1(@grpc/grpc-js@1.14.0)':
+  '@rootsdk/server-app@0.17.0(@grpc/grpc-js@1.14.0)':
     dependencies:
       '@protobuf-ts/grpc-transport': 2.11.1(@grpc/grpc-js@1.14.0)
       '@protobuf-ts/runtime': 2.11.1
